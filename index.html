@@ -14,13 +14,14 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
     function App() {
       const [quizType, setQuizType] = useState(null);
       const [currentQuestion, setCurrentQuestion] = useState(0);
       const [score, setScore] = useState(0);
       const [showScore, setShowScore] = useState(false);
+      const [userInput, setUserInput] = useState('');
 
       const [quizzes] = useState({
         general: [
@@ -36,6 +37,11 @@
           { question: '(음악) "음이 높은 나무피리"라는 뜻의 프랑스어에서 이름이 유래한 악기. 바로크 시대의 대표적인 목관악기로 동양적인 애수를 띤 음색이 특색으로 꼽히는 이것은?',  options: [], answer: '오보에', type: 'text'}
         ]
       });
+
+      // 문제 이동 시마다 입력값 초기화
+      useEffect(() => {
+        setUserInput('');
+      }, [currentQuestion, quizType]);
 
       const handleAnswerOptionClick = (selected) => {
         const correctAnswer = quizzes[quizType][currentQuestion].answer;
@@ -54,6 +60,7 @@
         }
 
         const nextQuestion = currentQuestion + 1;
+        setUserInput(''); // 답 제출 시 입력값 초기화
         if (nextQuestion < quizzes[quizType].length) {
           setCurrentQuestion(nextQuestion);
         } else {
@@ -66,6 +73,7 @@
         setCurrentQuestion(0);
         setScore(0);
         setShowScore(false);
+        setUserInput('');
       };
 
       return (
@@ -121,14 +129,15 @@
                   <input
                     type="text"
                     placeholder="Your answer"
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleAnswerOptionClick(e.target.value); }}
+                    value={userInput}
+                    onChange={e => setUserInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleAnswerOptionClick(userInput);
+                    }}
                     className="w-full px-2 py-1 border rounded"
                   />
                   <button
-                    onClick={() => {
-                      const input = document.querySelector('input[type=text]').value;
-                      handleAnswerOptionClick(input);
-                    }}
+                    onClick={() => handleAnswerOptionClick(userInput)}
                     className="px-4 py-2 bg-blue-500 text-white rounded"
                   >
                     Submit
