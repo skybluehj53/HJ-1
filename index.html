@@ -11,188 +11,210 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-  <div id="root"></div>
+<div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+<script type="text/babel">
+const { useState, useEffect } = React;
 
-    function App() {
-      const [quizType, setQuizType] = useState(null);
-      const [currentQuestion, setCurrentQuestion] = useState(0);
-      const [score, setScore] = useState(0);
-      const [showScore, setShowScore] = useState(false);
-      const [userInput, setUserInput] = useState('');
-      const [answers, setAnswers] = useState([]); // 모든 답안 기록
+function App() {
+  const [quizType, setQuizType] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showScore, setShowScore] = useState(false);
+  const [userInput, setUserInput] = useState('');
+  const [answers, setAnswers] = useState([]);
 
-      const [quizzes] = useState({
-        general: [
-          { question: '(경제) 일정기간 가계 소비지출 총액에서 식료품비가 차지하는 비율로서, 가계의 생활수준을 가늠하는 척도. OO 지수', options: [], answer: '엥겔', type: 'text'},
-          { question: '(사자성어) 능력과 재주가 뛰어난 사람은 스스로 두각을 나타낸다는 뜻으로, 송곳은 가만히 있어도 주머니를 뚫고 나온다는 고사성어는?',  options: [], answer: '낭중지추', type: 'text'},
-          { question: '(사자성어) 간과 쓸개를 서로 드러내 보인다는 뜻으로, 당나라의 한유와 유종원 사이의 우정을 가리키는 사자성어는?',  options: [], answer: '간담상조', type: 'text'},
-          { question: '(국어) 과녁의 한가운데를 가리키는 이 말은 솔개와 고니를 뜻하는 한자어로, 이 새들은 매우 민첩하고 높이 날기 때문에 활로 맞히기 힘든 것에서 유래했다. 어떤 일의 핵심을 간파했다는 뜻으로 "이것을 찌르다" 라고 하는 이 단어는?',  options: [], answer: '정곡', type: 'text'},
-          { question: '(용어) 열주(줄지어 늘어선 기둥)에 의해 지탱되는 아치군과 그것이 조성하는 개방된 통로공간을 뜻하는 용어로, 대표적으로 콜로세움이나 폼페이의 유적 등이 있다. 현재는 양쪽에 상점이 즐비한 도로에 지붕을 덮은 상점가를 말하는 이 단어는?',  options: [], answer: '아케이드', type: 'text'},
-          { question: '(지리) 석회암이 풍화되고 남은 불순물이 잔류하여 이루어진 점토질의 적색 토양으로, 라틴어로 "붉은 장밋빛 토양"이라는 뜻이다. 여름에 건조하고 겨울에 습윤한 지중해성 기후 하에서 많이 분포하는 이것은?',  options: [], answer: '테라로사', type: 'text'},
-          { question: '(문학) 미국의 생물학자 레이첼 카슨이 쓴 책으로, 유기염소계 농약인 DDT 등 여러 종류의 농약이 동물과 인간에게 끼치는 악영향을 밝혀 자연 보호와 환경보전의 중요함을 널리 인식시킨 책은?',  options: [], answer: ['침묵의봄', '침묵의 봄'], type: 'text'},
-          { question: '(영화,연극) 연극에서의 개막이나 개막 전 해설을 "프롤로그", 극의 종말에 추가한 끝 대사나 장면을 "에필로그"라 한다. 배우가 상대자 없이 혼자서 말하는 독백을 이르는 외래어는?', options: [], answer: '모놀로그', type: 'text'},
-          { question: '(의학) "나쁜 공기"에서 유래한 용어로 예전에는 나쁜 공기를 통해 전파된다고 믿어서 붙은 이름의 질병으로, 나중에 모기가 전파한다는 사실일 밝혀진 이것은?',  options: [], answer: '말라리아', type: 'text'},
-          { question: '(음악) "음이 높은 나무피리"라는 뜻의 프랑스어에서 이름이 유래한 악기. 바로크 시대의 대표적인 목관악기로 동양적인 애수를 띤 음색이 특색으로 꼽히는 이것은?',  options: [], answer: '오보에', type: 'text'}
-        ]
-      });
-      // 문제 이동 시마다 입력값 초기화
-      useEffect(() => {
-        setUserInput('');
-      }, [currentQuestion, quizType]);
+  const [quizzes] = useState({
+    general: [
+      { question: '(경제) 일정기간 가계 소비지출 총액에서 식료품비가 차지하는 비율로서, 가계의 생활수준을 가늠하는 척도. OO 지수', options: [], answer: '엥겔', type: 'text'},
+      { question: '(사자성어) 능력과 재주가 뛰어난 사람은 스스로 두각을 나타낸다는 뜻으로, 송곳은 가만히 있어도 주머니를 뚫고 나온다는 고사성어는?',  options: [], answer: '낭중지추', type: 'text'},
+      { question: '(사자성어) 간과 쓸개를 서로 드러내 보인다는 뜻으로, 당나라의 한유와 유종원 사이의 우정을 가리키는 사자성어는?',  options: [], answer: '간담상조', type: 'text'},
+      { question: '(국어) 과녁의 한가운데를 가리키는 이 말은 솔개와 고니를 뜻하는 한자어로, 이 새들은 매우 민첩하고 높이 날기 때문에 활로 맞히기 힘든 것에서 유래했다. 어떤 일의 핵심을 간파했다는 뜻으로 "이것을 찌르다" 라고 하는 이 단어는?',  options: [], answer: '정곡', type: 'text'},
+      { question: '(용어) 열주(줄지어 늘어선 기둥)에 의해 지탱되는 아치군과 그것이 조성하는 개방된 통로공간을 뜻하는 용어로, 대표적으로 콜로세움이나 폼페이의 유적 등이 있다. 현재는 양쪽에 상점이 즐비한 도로에 지붕을 덮은 상점가를 말하는 이 단어는?',  options: [], answer: '아케이드', type: 'text'},
+      { question: '(지리) 석회암이 풍화되고 남은 불순물이 잔류하여 이루어진 점토질의 적색 토양으로, 라틴어로 "붉은 장밋빛 토양"이라는 뜻이다. 여름에 건조하고 겨울에 습윤한 지중해성 기후 하에서 많이 분포하는 이것은?',  options: [], answer: '테라로사', type: 'text'},
+      { question: '(문학) 미국의 생물학자 레이첼 카슨이 쓴 책으로, 유기염소계 농약인 DDT 등 여러 종류의 농약이 동물과 인간에게 끼치는 악영향을 밝혀 자연 보호와 환경보전의 중요함을 널리 인식시킨 책은?',  options: [], answer: ['침묵의봄', '침묵의 봄'], type: 'text'},
+      { question: '(영화,연극) 연극에서의 개막이나 개막 전 해설을 "프롤로그", 극의 종말에 추가한 끝 대사나 장면을 "에필로그"라 한다. 배우가 상대자 없이 혼자서 말하는 독백을 이르는 외래어는?', options: [], answer: '모놀로그', type: 'text'},
+      { question: '(의학) "나쁜 공기"에서 유래한 용어로 예전에는 나쁜 공기를 통해 전파된다고 믿어서 붙은 이름의 질병으로, 나중에 모기가 전파한다는 사실일 밝혀진 이것은?',  options: [], answer: '말라리아', type: 'text'},
+      { question: '(음악) "음이 높은 나무피리"라는 뜻의 프랑스어에서 이름이 유래한 악기. 바로크 시대의 대표적인 목관악기로 동양적인 애수를 띤 음색이 특색으로 꼽히는 이것은?',  options: [], answer: '오보에', type: 'text'}
+    ],
+    quiz2: [
+      { question: '(국어) 흔히 이치나 도리에 맞지 않을 때 "이것이 없다" 라는 말을 한다. "터를 잡은 자취"를 뜻하는 이 단어는?', options: [], answer: '터무니', type: 'text' },
+      { question: '(국어) 소나 염소가 한번 삼킨 먹이를 다시 입속으로 올려 씹어 삼키는 되새김질을 이르는 한자어로, 어떤 일을 되풀이 해 음미하거나 생각하는 경우에 쓰이는 단어는?', options: [], answer: '반추', type: 'text' },
+      { question: '(과학) 인간세포 중 최초로 배양에 성공한 암세포주로, 1951년 미국 흑인 여성의 자궁경부암 조직에서 채취되었다. 소아마비 백신 개발에 결정적인 역할을 하였을 뿐만 아니라 항암제 등의 연구에도 이용되고 있는 이것의 명칭은 조직을 채취했던 환자의 이름에서 유래하였다. 이 세포의 이름은? OO 세포 (한글)',  options: [], answer: '헬라', type: 'text' },
+      { question: '(과학) 토성의 가장 큰 위성이자, 태양계에서 두 번째로 큰 위성. 태양계 위성 가운데 유일하게 두터운 대기와 액체로 된 호수를 갖고 있으며, 다양한 탄화수소 화합물과 나이트릴, 소량의 산소화합물이 발견되면서 외계생명체가 존재할 수 있는 유력한 후보지로 주목받고 있은 이 위성은?', type: 'mcq', options: ['가니메데', '타이탄', '유로파', '칼리스토'], answer: '타이탄' },
+      { question: '(동식물) 고귀한 흰빛이란 뜻으로 순수의 상징으로 여겨져 온 알프스의 영원한 꽃. 이름이 알프스를 배경으로 한 <사운드 오브 뮤직>의 주제곡이기도 한 이 꽃은?', options: [], answer: '에델바이스', type: 'text' },
+      { question: '(정치) 의회 안에서의 다수파의 독주를 막기 위해 이뤄지는 합법적 의사진행 방해 행위로, "해적선" 또는 "약탈자"를 의미하는 스페인어에서 유래한 이 용어는?', options: [], answer: '필리버스터', type: 'text' },
+      { question: '(정치) 미국에서 의회 연설 등과 같은 공식 행사에서 테러나 재난 등의 비상사태가 발생, 대통령과 부통령 등 대통령직 승계자들이 변을 당할 경우 대통령 권한을 대행할 사람을 지칭하는 말은?', options: [], answer: '지정생존자', type: 'text' },
+      { question: '(한국사) 조선 말기 개화기에 중국의 선진 문물을 견학하기 위해 젊은 유학생들을 거느리고 건너가 청나라의 무기제조법 등을 배워오고, 미국과의 수교문제에 관하여 사전 조율하기 위해 중국을 다녀온 사신을 일컫는 말은?', type: 'mcq', options: ['통신사', '수신사', '보빙사', '영선사'], answer: '영선사' },
+      { question: '(세계사) 세계 최초로 여성에게 투표권을 부여한 나라는?', type: 'mcq', options: ['핀란드', '스위스', '뉴질랜드', '캐나다'], answer: '뉴질랜드' },
+      { question: '(세계사) 중국의 개혁과 개방을 이끈 덩샤오핑이 1979년 미국을 방문하고 돌아와 주장하면서 유명해진 말. 고양이 빛깔이 어떻든 고양이는 쥐만 잘 잡으면 되듯이, 자본주의든 공산주의든 상관없이 중국 인민을 잘 살게 하면 그것이 제일이라는 뜻으로 쓰였던 이 말은? OOOO론', options: [], answer: '흑묘백묘', type: 'text' },
+      { question: '(용어) 골프 대회의 관람객을 의미하는 용어. 원래 복도, 화랑, 극장의 발코니 등을 뜻하나, 골프 관람객들이 페어웨이 양편으로 늘어선 모습이 화랑을 연상시키고 미술품을 관람하듯 조용히 플레이를 지켜본다 하여 의미가 추가되어 사용되는 이 단어는?', options: [], answer: '갤러리', type: 'text' },
+      { question: '(용어) 한국인 남성과 필리핀 여성 사이에서 태어난 혼혈자녀는 "코피노"라고 한다. 그렇다면 베트남전에 참전했던 한국인과 베트남인 사이에서 태어난 혼혈인은 일컫는 용어는 무엇일까?', options: [], answer: '라이따이한', type: 'text' },
+      { question: '(의학) 다양한 장기를 침범하는 결합조직 연관 유전질환으로, 주증상으로는 팔다리의 긴뼈의 과다 성장, 척추 만곡, 가슴뼈의 함몰 또는 돌출 등이 있다. 파가니니가 세계적인 바이올리니스트가 될 수 있었던 이유로도 추정되는 이 증후군은? OOO 증후군',  options: [], answer: ['마르팡', '마르판'], type: 'text'},
+      { question: '(음악) 프랑스에서 시작된 3/4 박자의 무용과 곡을 뜻하는 이것은 스텝의 폭이 작은데서 이름이 붙여졌다. 우아하고 화려한 것이 특징이며 프랑스 루이 14세 때 널리 유행한 이것은?', options: [], answer: '미뉴에트', type: 'text' },
+      { question: '(음악) 원래 무도곡을 가리켰으나, 나중에는 로맨틱한 가사의 민요를 뜻하게 되어 19세기에는 상류 사회에서 불려지던 감상적인 가곡을 가리키기도 하였음. 현재는 일반적으로 미디엄에서 슬로우 템포의 로맨틱하고 감상적인 러브 송을 지칭하는 이것은?', options: [], answer: '발라드', type: 'text' },
+      { question: '(미술) 박물관이나 미술관 등에서 관람객들에게 전시물을 설명하는 안내인을 지칭하는 단어로, "가르치다"라는 뜻의 라틴어에서 유래한 이것은?', options: [], answer: '도슨트', type: 'text' },
+      { question: '(종교) 불교에서 수행에 의해 진리를 체득하여 미혹과 집착을 끊고 일체의 속박에서 해탈한 최고의 경지를 뜻하는 말로, 산스크리트어 "Nirvana"의 한자 독음이기도 한 이것은?', options: [], answer: '열반', type: 'text' },
+      { question: '(경제) 해외에 나가 있는 자국기업들을 각종 세제 헤택과 규제 완화 등을 통해 자국으로 불러들이는 정책을 지칭하는 용어는?', options: [], answer: '리쇼어링', type: 'text' },
+      { question: '(경제) 높은 성장률을 기록하면서도 물가상승 압력이 거의 없는 이상적인 경제상황을 OOOO 경제라고 한다. 영국 전래동화에서 유래한 이 용어는?', options: [], answer: '골디락스', type: 'text' },
+      { question: '(사자성어) 물에 칼을 빠뜨린 후 배에 새겨 놓고 검을 찾는다는 뜻으로, 어리석고 미련하여 융통성이 없는 것을 비유하는 고사성어는?', options: [], answer: '각주구검', type: 'text' }
 
-      const handleAnswerOptionClick = (selected) => {
-        const correctAnswer = quizzes[quizType][currentQuestion].answer;
-        let isCorrect = false;
+    ]
+  });
 
-        if (Array.isArray(correctAnswer)) {
-          isCorrect = correctAnswer.some(
-            ans => selected.trim().toLowerCase() === ans.trim().toLowerCase()
-          );
-        } else {
-          isCorrect = selected.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
-        }
+  useEffect(() => {
+    setUserInput('');
+  }, [currentQuestion, quizType]);
 
-        // 답안 기록 저장
-        setAnswers(prev => [
-          ...prev,
-          {
-            question: quizzes[quizType][currentQuestion].question,
-            correct: correctAnswer,
-            user: selected,
-            isCorrect: isCorrect
-          }
-        ]);
+  const handleAnswerOptionClick = (selected) => {
+    const correctAnswer = quizzes[quizType][currentQuestion].answer;
+    let isCorrect = false;
 
-        if (isCorrect) {
-          setScore(score + 1);
-        }
+    if (Array.isArray(correctAnswer)) {
+      isCorrect = correctAnswer.some(
+        ans => selected.trim().toLowerCase() === ans.trim().toLowerCase()
+      );
+    } else {
+      isCorrect = selected.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+    }
 
-        const nextQuestion = currentQuestion + 1;
-        setUserInput(''); // 답 제출 시 입력값 초기화
-        if (nextQuestion < quizzes[quizType].length) {
-          setCurrentQuestion(nextQuestion);
-        } else {
-          setShowScore(true);
-        }
-      };
+    setAnswers(prev => [
+      ...prev,
+      {
+        question: quizzes[quizType][currentQuestion].question,
+        correct: correctAnswer,
+        user: selected,
+        isCorrect: isCorrect
+      }
+    ]);
 
-      const startQuiz = (type) => {
-        setQuizType(type);
-        setCurrentQuestion(0);
-        setScore(0);
-        setShowScore(false);
-        setUserInput('');
-        setAnswers([]); // 새 시작 시 기록 초기화
-      };
+    if (isCorrect) {
+      setScore(score + 1);
+    }
 
-      return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-300 to-blue-600 text-white p-4">
-          <h1 className="text-4xl font-bold mb-8">HJ Quiz Site</h1>
+    const nextQuestion = currentQuestion + 1;
+    setUserInput('');
+    if (nextQuestion < quizzes[quizType].length) {
+      setCurrentQuestion(nextQuestion);
+    } else {
+      setShowScore(true);
+    }
+  };
 
-          {!quizType ? (
-            <div className="space-y-4 w-full max-w-md">
-              <div className="flex space-x-4 flex-wrap">
-                {Object.keys(quizzes).map((quiz) => (
-                  <button
-                    key={quiz}
-                    onClick={() => startQuiz(quiz)}
-                    className="px-6 py-3 bg-white text-blue-600 rounded-lg shadow hover:bg-gray-100"
-                  >
-                    {quiz} Quiz
-                  </button>
+  const startQuiz = (type) => {
+    setQuizType(type);
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowScore(false);
+    setUserInput('');
+    setAnswers([]);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-300 to-blue-600 text-white p-4">
+      <h1 className="text-4xl font-bold mb-8">HJ Quiz Site</h1>
+
+      {!quizType ? (
+        <div className="space-y-4 w-full max-w-md">
+          <div className="flex space-x-4 flex-wrap">
+            {Object.keys(quizzes).map((quiz) => (
+              <button
+                key={quiz}
+                onClick={() => startQuiz(quiz)}
+                className="px-6 py-3 bg-white text-blue-600 rounded-lg shadow hover:bg-gray-100"
+              >
+                {quiz} Quiz
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : showScore ? (
+        <div className="w-full max-w-4xl bg-white text-blue-800 rounded-lg shadow p-6 space-y-4">
+          <p className="text-2xl mb-4 text-center font-bold">
+            You scored {score} out of {quizzes[quizType].length}
+          </p>
+          <div className="overflow-auto">
+            <table className="w-full text-sm border border-gray-300">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="px-2 py-1 border">#</th>
+                  <th className="px-2 py-1 border">문제</th>
+                  <th className="px-2 py-1 border">내 답</th>
+                  <th className="px-2 py-1 border">정답</th>
+                  <th className="px-2 py-1 border">결과</th>
+                </tr>
+              </thead>
+              <tbody>
+                {answers.map((a, i) => (
+                  <tr key={i} className="border-t">
+                    <td className="px-2 py-1 border">{i + 1}</td>
+                    <td className="px-2 py-1 border">{a.question}</td>
+                    <td className="px-2 py-1 border">{a.user}</td>
+                    <td className="px-2 py-1 border">
+                      {Array.isArray(a.correct) ? a.correct.join(', ') : a.correct}
+                    </td>
+                    <td className={`px-2 py-1 border font-bold ${a.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                      {a.isCorrect ? '정답' : '오답'}
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
-          ) : showScore ? (
-            <div className="w-full max-w-4xl bg-white text-blue-800 rounded-lg shadow p-6 space-y-4">
-              <p className="text-2xl mb-4 text-center font-bold">
-                You scored {score} out of {quizzes[quizType].length}
-              </p>
-              <div className="overflow-auto">
-                <table className="w-full text-sm border border-gray-300">
-                  <thead className="bg-gray-200">
-                    <tr>
-                      <th className="px-2 py-1 border">#</th>
-                      <th className="px-2 py-1 border">문제</th>
-                      <th className="px-2 py-1 border">내 답</th>
-                      <th className="px-2 py-1 border">정답</th>
-                      <th className="px-2 py-1 border">결과</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {answers.map((a, i) => (
-                      <tr key={i} className="border-t">
-                        <td className="px-2 py-1 border">{i + 1}</td>
-                        <td className="px-2 py-1 border">{a.question}</td>
-                        <td className="px-2 py-1 border">{a.user}</td>
-                        <td className="px-2 py-1 border">
-                          {Array.isArray(a.correct) ? a.correct.join(', ') : a.correct}
-                        </td>
-                        <td className={`px-2 py-1 border font-bold ${a.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                          {a.isCorrect ? '정답' : '오답'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="text-center">
+              </tbody>
+            </table>
+          </div>
+          <div className="text-center">
+            <button
+              onClick={() => setQuizType(null)}
+              className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full max-w-md bg-white text-blue-800 rounded-lg shadow p-6 space-y-4">
+          <h2 className="text-xl">
+            Question {currentQuestion + 1}/{quizzes[quizType].length}
+          </h2>
+          <p>{quizzes[quizType][currentQuestion].question}</p>
+          {quizzes[quizType][currentQuestion].type === 'mcq' ? (
+            <div className="space-y-2">
+              {quizzes[quizType][currentQuestion].options.map((option, index) => (
                 <button
-                  onClick={() => setQuizType(null)}
-                  className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
+                  key={index}
+                  onClick={() => handleAnswerOptionClick(option)}
+                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Go Back
+                  {option}
                 </button>
-              </div>
+              ))}
             </div>
           ) : (
-            <div className="w-full max-w-md bg-white text-blue-800 rounded-lg shadow p-6 space-y-4">
-              <h2 className="text-xl">
-                Question {currentQuestion + 1}/{quizzes[quizType].length}
-              </h2>
-              <p>{quizzes[quizType][currentQuestion].question}</p>
-              {quizzes[quizType][currentQuestion].type === 'mcq' ? (
-                <div className="space-y-2">
-                  {quizzes[quizType][currentQuestion].options.map((option, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleAnswerOptionClick(option)}
-                      className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    placeholder="Your answer"
-                    value={userInput}
-                    onChange={e => setUserInput(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') handleAnswerOptionClick(userInput);
-                    }}
-                    className="w-full px-2 py-1 border rounded"
-                  />
-                  <button
-                    onClick={() => handleAnswerOptionClick(userInput)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded"
-                  >
-                    Submit
-                  </button>
-                </div>
-              )}
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Your answer"
+                value={userInput}
+                onChange={e => setUserInput(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleAnswerOptionClick(userInput);
+                }}
+                className="w-full px-2 py-1 border rounded"
+              />
+              <button
+                onClick={() => handleAnswerOptionClick(userInput)}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Submit
+              </button>
             </div>
           )}
         </div>
-      );
-    }
+      )}
+    </div>
+  );
+}
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
