@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>HJ Quiz Site</title>
-  <!-- React, ReactDOM, Babel CDN -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
 <div id="root"></div>
 
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 function App() {
   const [quizType, setQuizType] = useState(null);
@@ -24,8 +22,11 @@ function App() {
   const [userInput, setUserInput] = useState('');
   const [answers, setAnswers] = useState([]);
 
+  const [showModal, setShowModal] = useState(false);
+  const audioRef = useRef(null);
+
   const [quizzes] = useState({
-    general: [
+    튜토리얼: [
       { question: '(경제) 일정기간 가계 소비지출 총액에서 식료품비가 차지하는 비율로서, 가계의 생활수준을 가늠하는 척도. OO 지수', options: [], answer: '엥겔', type: 'text'},
       { question: '(사자성어) 능력과 재주가 뛰어난 사람은 스스로 두각을 나타낸다는 뜻으로, 송곳은 가만히 있어도 주머니를 뚫고 나온다는 고사성어는?',  options: [], answer: '낭중지추', type: 'text'},
       { question: '(사자성어) 간과 쓸개를 서로 드러내 보인다는 뜻으로, 당나라의 한유와 유종원 사이의 우정을 가리키는 사자성어는?',  options: [], answer: '간담상조', type: 'text'},
@@ -37,7 +38,8 @@ function App() {
       { question: '(의학) "나쁜 공기"에서 유래한 용어로 예전에는 나쁜 공기를 통해 전파된다고 믿어서 붙은 이름의 질병으로, 나중에 모기가 전파한다는 사실일 밝혀진 이것은?',  options: [], answer: '말라리아', type: 'text'},
       { question: '(음악) "음이 높은 나무피리"라는 뜻의 프랑스어에서 이름이 유래한 악기. 바로크 시대의 대표적인 목관악기로 동양적인 애수를 띤 음색이 특색으로 꼽히는 이것은?',  options: [], answer: '오보에', type: 'text'}
     ],
-    quiz2: [
+
+    종합1: [
       { question: '(국어) 흔히 이치나 도리에 맞지 않을 때 "이것이 없다" 라는 말을 한다. "터를 잡은 자취"를 뜻하는 이 단어는?', options: [], answer: '터무니', type: 'text' },
       { question: '(국어) 소나 염소가 한번 삼킨 먹이를 다시 입속으로 올려 씹어 삼키는 되새김질을 이르는 한자어로, 어떤 일을 되풀이 해 음미하거나 생각하는 경우에 쓰이는 단어는?', options: [], answer: '반추', type: 'text' },
       { question: '(과학) 인간세포 중 최초로 배양에 성공한 암세포주로, 1951년 미국 흑인 여성의 자궁경부암 조직에서 채취되었다. 소아마비 백신 개발에 결정적인 역할을 하였을 뿐만 아니라 항암제 등의 연구에도 이용되고 있는 이것의 명칭은 조직을 채취했던 환자의 이름에서 유래하였다. 이 세포의 이름은? OO 세포 (한글)',  options: [], answer: '헬라', type: 'text' },
@@ -58,25 +60,32 @@ function App() {
       { question: '(경제) 해외에 나가 있는 자국기업들을 각종 세제 헤택과 규제 완화 등을 통해 자국으로 불러들이는 정책을 지칭하는 용어는?', options: [], answer: '리쇼어링', type: 'text' },
       { question: '(경제) 높은 성장률을 기록하면서도 물가상승 압력이 거의 없는 이상적인 경제상황을 OOOO 경제라고 한다. 영국 전래동화에서 유래한 이 용어는?', options: [], answer: '골디락스', type: 'text' },
       { question: '(사자성어) 물에 칼을 빠뜨린 후 배에 새겨 놓고 검을 찾는다는 뜻으로, 어리석고 미련하여 융통성이 없는 것을 비유하는 고사성어는?', options: [], answer: '각주구검', type: 'text' }
+    ],
 
+    종합2: [
+      { question: '안평대군이 꿈 속에서 본 도원의 광경을 조선 전기의 화가 안견에게 말하여 그리게 한 이 그림은 무엇일까?', image: 'https://raw.githubusercontent.com/skybluehj53/HJ-1/main/picture/%EB%AA%BD%EC%9C%A0%EB%8F%84%EC%9B%90%EB%8F%84.jpg', options: [], answer: '몽유도원도', type: 'text' },
+      { question: '(음악) 1834년 바르샤바 출생으로 쇼팽과 같은 시대의 음악가였던 폴란드 여류 피아니스트 바다르 체프스카는  27세의 짧은 일생을 보냈으나, 이 한 곡으로 이름을 남기게 되었다. 이 곡의 이름은? OOOOO', audio: 'https://raw.githubusercontent.com/skybluehj53/HJ-1/main/music/%EC%86%8C%EB%85%80%EC%9D%98%EA%B8%B0%EB%8F%84.mp3', options: [], answer: ['소녀의기도', '소녀의 기도'], type: 'text' }
     ]
   });
 
   useEffect(() => {
     setUserInput('');
+    setShowModal(false);
+    if(audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
   }, [currentQuestion, quizType]);
 
   const handleAnswerOptionClick = (selected) => {
-    const correctAnswer = quizzes[quizType][currentQuestion].answer;
-    let isCorrect = false;
-
-    if (Array.isArray(correctAnswer)) {
-      isCorrect = correctAnswer.some(
-        ans => selected.trim().toLowerCase() === ans.trim().toLowerCase()
-      );
-    } else {
-      isCorrect = selected.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+    if(audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
+    const correctAnswer = quizzes[quizType][currentQuestion].answer;
+    const isCorrect = Array.isArray(correctAnswer)
+      ? correctAnswer.some(ans => selected.trim().toLowerCase() === ans.trim().toLowerCase())
+      : selected.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
 
     setAnswers(prev => [
       ...prev,
@@ -84,21 +93,16 @@ function App() {
         question: quizzes[quizType][currentQuestion].question,
         correct: correctAnswer,
         user: selected,
-        isCorrect: isCorrect
+        isCorrect
       }
     ]);
 
-    if (isCorrect) {
-      setScore(score + 1);
-    }
+    if (isCorrect) setScore(score + 1);
 
     const nextQuestion = currentQuestion + 1;
     setUserInput('');
-    if (nextQuestion < quizzes[quizType].length) {
-      setCurrentQuestion(nextQuestion);
-    } else {
-      setShowScore(true);
-    }
+    if (nextQuestion < quizzes[quizType].length) setCurrentQuestion(nextQuestion);
+    else setShowScore(true);
   };
 
   const startQuiz = (type) => {
@@ -108,6 +112,25 @@ function App() {
     setShowScore(false);
     setUserInput('');
     setAnswers([]);
+    setShowModal(false);
+    if(audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
+
+  // 오디오 제어 함수
+  const playAudio = () => {
+    if (audioRef.current) audioRef.current.play();
+  };
+  const pauseAudio = () => {
+    if (audioRef.current) audioRef.current.pause();
+  };
+  const resetAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
   };
 
   return (
@@ -115,8 +138,8 @@ function App() {
       <h1 className="text-4xl font-bold mb-8">HJ Quiz Site</h1>
 
       {!quizType ? (
-        <div className="space-y-4 w-full max-w-md">
-          <div className="flex space-x-4 flex-wrap">
+        <div className="w-full max-w-md">
+          <div className="flex flex-col space-y-4">
             {Object.keys(quizzes).map((quiz) => (
               <button
                 key={quiz}
@@ -129,11 +152,11 @@ function App() {
           </div>
         </div>
       ) : showScore ? (
-        <div className="w-full max-w-4xl bg-white text-blue-800 rounded-lg shadow p-6 space-y-4">
+        <div className="w-full max-w-4xl bg-white text-blue-800 rounded-lg shadow p-6">
           <p className="text-2xl mb-4 text-center font-bold">
             You scored {score} out of {quizzes[quizType].length}
           </p>
-          <div className="overflow-auto">
+          <div className="overflow-auto max-h-[400px]">
             <table className="w-full text-sm border border-gray-300">
               <thead className="bg-gray-200">
                 <tr>
@@ -161,50 +184,116 @@ function App() {
               </tbody>
             </table>
           </div>
-          <div className="text-center">
+          <div className="text-center mt-4">
             <button
               onClick={() => setQuizType(null)}
-              className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
             >
               Go Back
             </button>
           </div>
         </div>
       ) : (
-        <div className="w-full max-w-md bg-white text-blue-800 rounded-lg shadow p-6 space-y-4">
-          <h2 className="text-xl">
-            Question {currentQuestion + 1}/{quizzes[quizType].length}
+        <div className="w-full max-w-md bg-white text-blue-800 rounded-lg shadow p-6">
+          <h2 className="text-xl mb-2">
+            Question {currentQuestion + 1} / {quizzes[quizType].length}
           </h2>
           <p>{quizzes[quizType][currentQuestion].question}</p>
-          {quizzes[quizType][currentQuestion].type === 'mcq' ? (
-            <div className="space-y-2">
-              {quizzes[quizType][currentQuestion].options.map((option, index) => (
+
+          {/* 이미지 문제 및 모달 */}
+          {quizzes[quizType][currentQuestion].image && (
+            <>
+              <img
+                src={quizzes[quizType][currentQuestion].image}
+                alt="문제 이미지"
+                className="my-4 rounded-lg border max-w-full cursor-pointer"
+                onClick={() => setShowModal(true)}
+              />
+              <div className="flex space-x-2 justify-center mt-2">
                 <button
-                  key={index}
+                  onClick={() => setShowModal(true)}
+                  className="px-3 py-1 bg-green-500 text-white rounded"
+                >
+                  확대
+                </button>
+              </div>
+
+              {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="absolute top-6 right-6 text-white bg-red-600 rounded-full px-4 py-2 shadow-lg hover:bg-red-700"
+                  >
+                    닫기
+                  </button>
+                  <img
+                    src={quizzes[quizType][currentQuestion].image}
+                    alt="확대된 문제 이미지"
+                    className="max-w-4xl max-h-full rounded-lg shadow-lg"
+                  />
+                </div>
+              )}
+            </>
+          )}
+
+          {/* 오디오 문제일 경우 */}
+          {quizzes[quizType][currentQuestion].audio && (
+            <>
+              <audio ref={audioRef} src={quizzes[quizType][currentQuestion].audio} />
+              <div className="flex space-x-3 justify-center mt-4">
+                <button
+                  onClick={playAudio}
+                  className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
+                >
+                  ▶ 재생
+                </button>
+                <button
+                  onClick={pauseAudio}
+                  className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600"
+                >
+                  ❙❙ 중지
+                </button>
+                <button
+                  onClick={resetAudio}
+                  className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
+                >
+                  ■ 초기화
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* 객관식 문제일 경우 */}
+          {quizzes[quizType][currentQuestion].type === 'mcq' && quizzes[quizType][currentQuestion].options.length > 0 ? (
+            <div className="space-y-2 mt-4">
+              {quizzes[quizType][currentQuestion].options.map((option, idx) => (
+                <button
+                  key={idx}
                   onClick={() => handleAnswerOptionClick(option)}
-                  className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded py-2"
                 >
                   {option}
                 </button>
               ))}
             </div>
           ) : (
-            <div className="space-y-2">
+            // 주관식 답안 입력
+            <div className="space-y-2 mt-4">
               <input
                 type="text"
-                placeholder="Your answer"
+                placeholder="답을 입력하세요"
                 value={userInput}
-                onChange={e => setUserInput(e.target.value)}
-                onKeyDown={e => {
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyDown={(e) => {
                   if (e.key === 'Enter') handleAnswerOptionClick(userInput);
                 }}
-                className="w-full px-2 py-1 border rounded"
+                className="w-full border border-blue-600 rounded px-3 py-2 text-blue-700"
               />
               <button
                 onClick={() => handleAnswerOptionClick(userInput)}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="w-full bg-blue-700 hover:bg-blue-800 text-white rounded py-2"
               >
-                Submit
+                제출
               </button>
             </div>
           )}
