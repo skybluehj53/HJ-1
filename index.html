@@ -33,7 +33,8 @@ const studySubjects = {
 
   ],
   지리: [
-    { title: "테라로사", content: "붉은 점토질 토양으로 지중해성 기후에서 많이 발견됩니다." }
+    { title: "테라로사", content: "석회암이 풍화되고 남은 불순물이 잔류하여 이루어진 점토질의 적색 토양. 라틴어로 '붉은 장및빛 토양'이라는 뜻으로, 여름에 건조하고 겨울에 습윤한 지중해성 기후 하에서 많이 분포한다." },
+    { title: "케이맨 제도 (Cayman Islands)", content: "원래 자메이카의 일부였으나 1670년 마드리드 협정에 의해 영국에 귀속된 카리브 해의 영국령 제도이다. 조세 피난처로 유명하며, 현지인들보다는 국제적인 금융 비즈니스맨들이 더 많이 상주하고 있는 세계 5대 금융 중심지에 해당한다.", image: 'https://raw.githubusercontent.com/skybluehj53/HJ-1/main/picture/cayman.jpg' }
   ],
   "국어&한자": [
     { title: "<순우리말>", content: "은하수 -> 미리내 \n 강 -> 가람 \n 용 -> 미르 \n 우주 -> 한울 \n " },
@@ -76,7 +77,7 @@ const studySubjects = {
 };
 
 function App() {
-  const [appPage, setAppPage] = useState("main"); // main, quiz, study
+  const [appPage, setAppPage] = useState("main");
   const [quizType, setQuizType] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -85,6 +86,7 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [studySubject, setStudySubject] = useState(null);
+  const [studyShowModal, setStudyShowModal] = useState({ visible: false, src: '', alt: '' });
   const audioRef = useRef(null);
 
   const [quizzes] = useState({
@@ -200,12 +202,8 @@ function App() {
     }
   };
 
-  const playAudio = () => {
-    if (audioRef.current) audioRef.current.play();
-  };
-  const pauseAudio = () => {
-    if (audioRef.current) audioRef.current.pause();
-  };
+  const playAudio = () => { if (audioRef.current) audioRef.current.play(); };
+  const pauseAudio = () => { if (audioRef.current) audioRef.current.pause(); };
   const resetAudio = () => {
     if (audioRef.current) {
       audioRef.current.pause();
@@ -453,6 +451,16 @@ function App() {
                 {studySubjects[studySubject].map((item, idx) => (
                   <div key={idx} className="p-4 border rounded-lg bg-green-100 text-green-900 shadow">
                     <div className="font-bold mb-2 text-lg">{item.title}</div>
+                    {item.image && (
+                      <>
+                        <img
+                          src={item.image}
+                          alt={`${item.title} 이미지`}
+                          className="my-4 rounded shadow max-w-xs cursor-pointer"
+                          onClick={() => setStudyShowModal({ visible: true, src: item.image, alt: `${item.title} 이미지` })}
+                        />
+                      </>
+                    )}
                     <div className="text-md" style={{ whiteSpace: 'pre-line' }}>
                       {item.content}
                     </div>
@@ -475,6 +483,40 @@ function App() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* 학습 이미지 확대 모달 */}
+      {studyShowModal.visible && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <button
+            onClick={() => setStudyShowModal({ visible: false, src: '', alt: '' })}
+            className="absolute top-6 right-6 text-white bg-red-600 rounded-full px-4 py-2 shadow-lg hover:bg-red-700"
+          >
+            닫기
+          </button>
+          <img
+            src={studyShowModal.src}
+            alt={studyShowModal.alt}
+            className="max-w-4xl max-h-full rounded-lg shadow-lg"
+          />
+        </div>
+      )}
+
+      {/* 퀴즈 문제 이미지 확대 모달 */}
+      {showModal && quizType && quizzes[quizType][currentQuestion].image && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <button
+            onClick={() => setShowModal(false)}
+            className="absolute top-6 right-6 text-white bg-red-600 rounded-full px-4 py-2 shadow-lg hover:bg-red-700"
+          >
+            닫기
+          </button>
+          <img
+            src={quizzes[quizType][currentQuestion].image}
+            alt="확대된 문제 이미지"
+            className="max-w-4xl max-h-full rounded-lg shadow-lg"
+          />
         </div>
       )}
     </div>
