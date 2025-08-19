@@ -10,19 +10,81 @@
 </head>
 <body>
 <div id="root"></div>
-
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
+// 학습 과목별 이론 데이터 예시
+const studySubjects = {
+  경제: [
+    { title: "베블런 효과 (Veblen effect)", content: "가격이 오르는데도 일부 계층의 과시욕이나 허영심 등으로 인해 수요가 줄어들지 않는 현상. 제도학파의 주요 경제학자 소스타인 베블런이 그의 첫 저서 <유한계급론>에서 언급한 효과로, 그는 이 저서에서 수요와 공급 법칙이 틀렸다며 강하게 주장했다." },
+    { title: "립스틱 효과", content: "경제적 불황기에 나타나는 특이한 소비 패턴으로, 소비자 만족도가 높으면서도 가격이 저렴한 사치품이나 기호품의 판매량이 증가하는 현상." },
+    { title: "윔블던 효과", content: "국내 시장에서 외국 기업보다 자국 기업의 활동이 부진한 현상, 또는 시장을 개방한 이후 국내 시장을 외국계 자금이 대부분 차지하는 현상을 가리킨다. 영국에서 개최되는 윔블던 테니스 대회에서 영국인 선수의 우승보다 외국인 선수의 우승이 더 많은 것에 빗대어 생긴 용어. 거래 시 편의 제고, 회계장부의 기장 처리 간편화, 인플레이션 기대심리 억제, 자국 통화의 대외적 위상 제고 등을 기대할 수 있다." },
+    { title: "리디노미네이션 (Redenomination)", content: "한 나라에서 통용되는 통화의 액면을 동일한 비율의 낮은 숫자로 변경하는 조치로, 화폐단위를 하향 조정하는 것을 말한다. 종전에는 디노미네이션(denomination)이라 불렀으나, 한국은행은 디노미네이션이 화폐, 채권, 주식 등의 액면금액을 의미하기 때문에 화폐단위 변경을 영어로 표현하려면 '리디노미네이션' 또는 '디노미네이션의 변경'이라는 표현을 사용하는 것이 정확하다고 밝힌 바 있다." },
+    { title: "테이퍼링 (Tapering)", content: "중앙은행이 양적 완화 정책(중앙 은행이 경기 부양을 위해 국채를 매입하거나 통화를 시장에 푸는 정책)의 규모를 점진적으로 축소해 나가는 것을 의미한다. 양적 완화 정책의 출구 전략 중 하나로, 경제 상황에 따라 완화의 속도를 조절하며 진행된다." },
+    { title: "크라우드펀딩 (Crowdfunding)", content: "후원, 기부, 대출, 투자 등을 목적으로 웹이나 모바일 네트워크 등을 통해 다수의 개인으로부터 자금을 모으는 행위를 일컫는다." },
+    { title: "SWOT 분석", content: "기업의 환경 분석을 통해 강점(Strength), 약점(Weakness), 기회(Opportunity)와 위협(Threat) 요인을 규정하고 이를 토대로 전략을 수립하는 기법." },
+    { title: "신데렐라 전략", content: "투자에서 사용되는 용어로, 신데렐라가 동화에서 파티가 절정에 달한 밤 12시가 넘기 전에 파티장을 빠져 나오듯, 실적 기대가 최고조에 달했을 때 시장을 빠져나오는 투자 전략." },
+    { title: "덤핑", content: "상품을 생산 원가 이하로 또는 자국 시장에서보다 현저히 낮은 가격으로 해외 시장에 판매하는 행위. 주로 특정 시장에서 경쟁 우위를 확보하거나, 국내 시장의 과잉 생산물을 처리하기 위해 사용된다." },
+    { title: "스타트업", content: "설립한 지 오래되지 않은 신생 벤처 기업을 뜻하는 용어. 주로 혁신적인 기술이나 아이디어를 바탕으로 기존 시장과는 다른 새로운 가치를 창출하며 성장 가능성이 높은 기업을 의미하며, 미국 실리콘 밸리에서 처음 사용되었다." },
+    { title: "유니콘", content: "기업 가치가 10억 달러 이상인 비상장 스타트업을 의미한다. \n *데카콘: 기업 가치가 100억 달러 이상인 비상장 스타트업" },
+    { title: "엥겔 지수 (Engel's Coefficient)", content: "일정 기간 가계 소비지출 총액에서 식료품비가 차지하는 비율로서, 가계의 생활 수준을 가늠하는 척도로 이용된다." },
+    { title: "빅맥 지수 (Big Mac Index)", content: "영국의 경제 전문지 '이코노미스트'에서 고안한 구매력 평가 지수로, 각국의 통화가치가 적정 수준인지 살피기 위해 각국의 맥도날드 매장에서 판매되는 빅맥 햄버거 가격을 달러로 환산한 후, 미국 빅맥 가격과 비교한다." },
+    { title: "애그플레이션 (Agflation)", content: "농업(agriculture)과 인플레이션(inflation)의 합성어로, 농산물 가격의 상승으로 인해 일반 물가까지 상승하는 현상을 의미한다." }
+
+  ],
+  지리: [
+    { title: "테라로사", content: "붉은 점토질 토양으로 지중해성 기후에서 많이 발견됩니다." }
+  ],
+  "국어&한자": [
+    { title: "<순우리말>", content: "은하수 -> 미리내 \n 강 -> 가람 \n 용 -> 미르 \n 우주 -> 한울 \n " },
+    { title: "<숫자의 옛말>", content: "백(百) -> 온 \n 천(千) -> 즈믄 \n 만 -> 골 \n 억 -> 잘 \n 조 -> 울 " },
+   { title: "견리사의 견위수명", content: "이로움을 보았을 때는 의로움을 생각하고, 위태로움을 보았을 때는 목숨을 바치라는 뜻으로, 공자의 '논어'에 나오는 글귀. 안중근 의사의 대표적인 유묵 중 하나이다." },
+    { title: "수신제가치국평천하", content: "'먼저 자기 자신을 닦고 집안을 가지런하게 한 다음, 나라를 다스리고 천하를 평안하게 한다'라는 뜻으로, 사서삼경 가운데 하나인 '대학'에 수록된 글이다. 유교에서 강조하는 올바른 선비의 길로, 개인의 수양에서 시작하여 점차 큰 일을 이루는 순차적인 단계의 중요성을 의미한다." },
+    { title: "상상", content: "원래 '코끼리에 대해 생각한다(想像)'는 뜻으로, <한비자>의 '해로편'에 따르면 당시 사람들은 코끼리의 존재는 알지만 한 번도 못 봤기 때문에 그 모습을 그려보았다는 것에서 유래한 단어이다." },
+    { title: "간서치", content: "지나치게 책을 읽는 데만 열중하거나 책만 읽어서 세상 물정에 어두운 사람을 비유적으로 이르는 말. 조선 후기 실학자 이덕무의 별명이기도 하였다." },
+    { title: "구슬이 서 말이라도 꿰어야 보배", content: "아무리 훌륭하고 좋은 것이라도 다듬고 정리하여 쓸모 있게 만들어 놓아야 값어치가 있음을 뜻하는 속담." },
+    { title: "추호(秋毫)", content: "가을철에 짐승의 털이 가늘어진 것을 비유하여 아주 적거나 조금이라는 뜻으로, 주로 '추호도 없다'와 같이 쓰여 조금도 없음을 강조하는 표현으로 사용된다." },
+    { title: "너스레", content: "원래는 흙구덩이나 그릇의 입구 등에 물건이 빠지지 않도록 걸쳐놓은 막대기를 일컫는 순우리말로, 현재는 이것을 늘어놓듯이 말을 장황하게 펼쳐놓을 때 '너스레를 떨다'라고 한다." },
+    { title: "팔불출 (八不出)", content: "주로 자신의 아이나 배우자 등을 지나치게 칭찬하거나 자랑하는 사람을 비꼬아 이르는 말로, 좀 더 구체적으로는 몹시 어리석거나 덜떨어진 사람을 가리키는 단어이기도 하다. 사회생활에서 지나치게 자기 자랑을 늘어놓는 사람을 비판하는 의미로도 사용된다." },
+    { title: "역린 (逆鱗)", content: "용의 목에 거꾸로 난 비늘을 말하는 것으로, 군주나 권력자가 노여워하는 그들만의 약점 또는 노여움 자체를 가리키는 <한비자>에서 유래한 단어이다." },
+    { title: "요지경", content: "원래는 확대경을 장치하여 놓고 그 속의 여러 가지 재미있는 그림을 돌리면서 구경하는 장치나 장난감을 뜻하는 단어로, 일상생활에서는 알쏭달쏭하고 묘한 세상일을 비유적으로 이르는 말로 사용된다." },
+    { title: "에누리", content: "본래는 흥정할 때 물건값을 받을 값보다 더 많이 올리는 일을 말하는 순우리말 단어이나, 현대에 와서는 대게 값을 깎는 일을 뜻하는 용도로 사용된다." },
+    { title: "매력 (魅力)", content: "글자 그대로 풀이하면 '도깨비의 힘'을 뜻하는 단어로, 도깨비가 잡아당기는 것처럼 어떤 것에 끌리는 저항할 수 없는 힘을 의미한다." },
+    { title: "두각 (頭角)", content: "원래 짐승의 머리에 뿔이 돋아난 모습을 뜻하는 말로, 여러 사람 중에서 학식이나 재능이 돋보이는 사람을 비유적으로 이르는 말이다. 당나라의 대표적인 문장가인 한유가 서로 깊이 이해하며 친교를 맺었던 유종원이 사망하자, 묘지명에 '두각을 나타냈다'라는 뜻의 '현두각'을 쓴 것에서 유래하였다." },
+    { title: "흐지부지", content: "꺼리고 비밀스러워 시비 결과를 분명히 밝히지 않고 구렁이가 담 넘어가듯 어물쩍 넘겨 버리는 것을 뜻하는 말로, 우리 고유어로 느껴지지만 사실은 숨기고 감춘다는 것을 뜻하는 한자어인 '휘지비지(諱之秘之)'에서 유래한 말이다." },
+    { title: "반추 (反芻)", content: "소나 염소가 한 번 삼킨 먹이를 다시 입속으로 올려 씹어 삼키는 되새김질을 이르는 한자어로, 어떤 일을 되풀이 해 음미하거나 생각하는 경우에 사용된다." },
+    { title: "을씨년스럽다", content: "쓸쓸하고 스산한 풍경이나 분위기를 묘사할 때 쓰는 말로, 을사조약으로 우리나라가 '을사년의 분위기처럼 쓸쓸하고 침통하다'는 뜻에서 유래하였다." },
+    { title: "터무니", content: "원래는 '터를 잡은 자취'를 뜻하는 말로, 흔히 이치나 도리에 맞지 않을 때 '터무니없다'라는 표현을 사용한다." },
+    { title: "봉안당 (奉安堂)", content: "정부가 발표한 일본식 용어인 '납골당'을 대체할 공식 표준어." },
+    { title: "팽개치다", content: "논밭에서 새들을 쫓아내기 위해 사용하던 대나무 도구인 '팡개'를 휘두르는 것에서 유래한 말로, 짜증이 나거나 못마땅하여 물건 따위를 내던지거나 하던 일을 중간에 그만두는 행위를 이른다." },
+    { title: "정곡 (正鵠)", content: "과녁의 한가운데를 가리키는 말로, '솔개와 고니'를 뜻하는 한자어이다. 이 새들은 매우 민첩하고 높이 날기 때문에 활로 맞히기 힘들어서 과녁의 가장 맞히기 힘든 부분을 이렇게 부르게 된 것으로, 어떤 일의 핵심을 간파했다는 뜻으로 '정곡을 찌르다'라는 표현을 사용한다." }
+
+  ],
+  사자성어: [
+    { title: "낭중지추", content: "능력과 재주가 뛰어난 사람은 스스로 두각을 나타낸다는 뜻으로, 송곳은 가만히 있어도 주머니를 뚫고 나온다는 뜻의 고사성어." },
+    { title: "간담상조", content: "간과 쓸개를 서로 드러내 보인다는 뜻으로 당나라의 한유와 유종원 사이의 우정을 가리키는 사자성어." },
+    { title: "야단법석", content: "<불교대사전>에 나오는 말로, '야외에 자리를 마련한 부처님 말씀을 듣는 자리'를 뜻한다. 법당이 좁아 많은 사람들을 다 수용할 수 없으므로 야외에 단을 펴고 설법을 듣고자 한 것에서 유래하여, 자리가 정돈되지 않고 어수선하며 시끌벅적함을 의미한다." },
+    { title: "견문발검", content: "'모기를 보고 칼을 뽑는다'는 뜻으로, 하찮은 일에 지나치게 과하게 대응하거나 사소한 일에 크게 화를 내는 어리석음을 비유하는 말." },
+    { title: "풍수지탄", content: "'바람이 나무를 흔들듯, 부모님께 효도하고 싶어도 이미 늦어 후회하게 된다'는 뜻으로, 부모님이 돌아가신 후 효도를 다하지 못한 것을 안타까워하며 후회하는 상황을 이르는 말." },
+    { title: "맥수지탄", content: "보리가 무성하게 자란 것을 탄식한다는 뜻으로, 고국이 망한 것을 슬퍼하며 탄식한다는 의미의 고사성어. <사기>에 나오는 말로 기자(箕子)가 중국 은나라의 패망을 한탄하여 지은 시에서 유래하였다." },
+    { title: "망양지탄", content: "'잃어버린 양을 찾지 못하고 탄식한다'는 뜻으로, 학문의 갈래가 많아 진리를 찾기 어려움을 비유하는 고사성어. <열자>의 설부 편에서 유래하였다." },
+    { title: "구밀복검", content: "'입으로는 꿀처럼 달콤한 말을 하지만, 속으로는 칼을 품고 있다'는 뜻으로, 겉으로는 친절하고 상냥하게 대하지만 속으로는 상대를 해치거나 악의를 품고 있는 이중적인 태도를 비유하는 고사성어." },
+    { title: "삼마태수", content: "'세 마리의 말만 타고 오는 수령'이라는 뜻으로, 재물을 탐하지 않는 청백리를 일컫는 고사성어. 조선 시대의 인물인 송흠이 별칭으로 불린 것에서 유래하였다." }
+
+  ]
+  // 필요한 만큼 과목과 콘텐츠 추가 가능
+};
+
 function App() {
+  const [appPage, setAppPage] = useState("main"); // main, quiz, study
   const [quizType, setQuizType] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [answers, setAnswers] = useState([]);
-
   const [showModal, setShowModal] = useState(false);
+  const [studySubject, setStudySubject] = useState(null);
   const audioRef = useRef(null);
 
   const [quizzes] = useState({
@@ -41,7 +103,7 @@ function App() {
 
     종합1: [
       { question: '(국어) 흔히 이치나 도리에 맞지 않을 때 "이것이 없다" 라는 말을 한다. "터를 잡은 자취"를 뜻하는 이 단어는?', options: [], answer: '터무니', type: 'text' },
-      { question: '(국어) 소나 염소가 한번 삼킨 먹이를 다시 입속으로 올려 씹어 삼키는 되새김질을 이르는 한자어로, 어떤 일을 되풀이 해 음미하거나 생각하는 경우에 쓰이는 단어는?', options: [], answer: '반추', type: 'text' },
+      { question: '(국어) 소나 염소가 한 번 삼킨 먹이를 다시 입속으로 올려 씹어 삼키는 되새김질을 이르는 한자어로, 어떤 일을 되풀이 해 음미하거나 생각하는 경우에 쓰이는 단어는?', options: [], answer: '반추', type: 'text' },
       { question: '(과학) 인간세포 중 최초로 배양에 성공한 암세포주로, 1951년 미국 흑인 여성의 자궁경부암 조직에서 채취되었다. 소아마비 백신 개발에 결정적인 역할을 하였을 뿐만 아니라 항암제 등의 연구에도 이용되고 있는 이것의 명칭은 조직을 채취했던 환자의 이름에서 유래하였다. 이 세포의 이름은? OO 세포 (한글)',  options: [], answer: '헬라', type: 'text' },
       { question: '(과학) 토성의 가장 큰 위성이자, 태양계에서 두 번째로 큰 위성. 태양계 위성 가운데 유일하게 두터운 대기와 액체로 된 호수를 갖고 있으며, 다양한 탄화수소 화합물과 나이트릴, 소량의 산소화합물이 발견되면서 외계생명체가 존재할 수 있는 유력한 후보지로 주목받고 있은 이 위성은?', type: 'mcq', options: ['가니메데', '타이탄', '유로파', '칼리스토'], answer: '타이탄' },
       { question: '(동식물) 고귀한 흰빛이란 뜻으로 순수의 상징으로 여겨져 온 알프스의 영원한 꽃. 이름이 알프스를 배경으로 한 <사운드 오브 뮤직>의 주제곡이기도 한 이 꽃은?', options: [], answer: '에델바이스', type: 'text' },
@@ -90,14 +152,14 @@ function App() {
   useEffect(() => {
     setUserInput('');
     setShowModal(false);
-    if(audioRef.current) {
+    if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
   }, [currentQuestion, quizType]);
 
   const handleAnswerOptionClick = (selected) => {
-    if(audioRef.current) {
+    if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
@@ -132,13 +194,12 @@ function App() {
     setUserInput('');
     setAnswers([]);
     setShowModal(false);
-    if(audioRef.current) {
+    if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
   };
 
-  // 오디오 제어 함수
   const playAudio = () => {
     if (audioRef.current) audioRef.current.play();
   };
@@ -152,169 +213,267 @@ function App() {
     }
   };
 
+  const getPercentScore = () => Math.round((score / quizzes[quizType].length) * 100);
+  const getScoreMessage = () => {
+    const percent = getPercentScore();
+    if (percent === 100) return '와! 완벽해요. 당신은 퀴즈 마스터입니다!';
+    if (percent >= 90) return '아주 우수해요! 거의 만점에 가까워요!';
+    if (percent >= 80) return '좋은 점수에요! 조금만 더 힘내봐요.';
+    if (percent >= 60) return '나쁘지 않아요. 좀 더 도전해봐도 좋아요!';
+    if (percent >= 40) return '기초 다지기! 꾸준히 하면 실력 쌓여요!';
+    return '처음부터 차근차근, 용기를 내서 다시 도전하세요!';
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-300 to-blue-600 text-white p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-sky-400 via-sky-300 to-sky-500 text-white p-6">
       <h1 className="text-4xl font-bold mb-8">HJ Quiz Site</h1>
 
-      {!quizType ? (
-        <div className="w-full max-w-md">
-          <div className="flex flex-col space-y-4">
-            {Object.keys(quizzes).map((quiz) => (
+      {/* 메인 페이지 */}
+      {appPage === "main" && (
+        <div className="w-full max-w-md mx-auto flex flex-col space-y-8">
+          <button
+            className="px-6 py-4 bg-blue-700 rounded-lg shadow font-bold text-xl hover:bg-blue-900"
+            onClick={() => setAppPage("quiz")}
+          >
+            Quiz 도전
+          </button>
+          <button
+            className="px-6 py-4 bg-green-600 rounded-lg shadow font-bold text-xl hover:bg-green-800"
+            onClick={() => {
+              setStudySubject(null);
+              setAppPage("study");
+            }}
+          >
+            학습하기
+          </button>
+        </div>
+      )}
+
+      {/* 퀴즈 영역 */}
+      {appPage === "quiz" && (
+        !quizType ? (
+          <div className="w-full max-w-md mx-auto flex flex-col space-y-4">
+            {Object.keys(quizzes).map(quiz => (
               <button
                 key={quiz}
+                className="px-6 py-3 bg-white text-blue-700 rounded-lg shadow hover:bg-gray-100 font-bold text-lg"
                 onClick={() => startQuiz(quiz)}
-                className="px-6 py-3 bg-white text-blue-600 rounded-lg shadow hover:bg-gray-100"
               >
                 {quiz} Quiz
               </button>
             ))}
-          </div>
-        </div>
-      ) : showScore ? (
-        <div className="w-full max-w-4xl bg-white text-blue-800 rounded-lg shadow p-6">
-          <p className="text-2xl mb-4 text-center font-bold">
-            You scored {score} out of {quizzes[quizType].length}
-          </p>
-          <div className="overflow-auto max-h-[400px]">
-            <table className="w-full text-sm border border-gray-300">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="px-2 py-1 border">#</th>
-                  <th className="px-2 py-1 border">문제</th>
-                  <th className="px-2 py-1 border">내 답</th>
-                  <th className="px-2 py-1 border">정답</th>
-                  <th className="px-2 py-1 border">결과</th>
-                </tr>
-              </thead>
-              <tbody>
-                {answers.map((a, i) => (
-                  <tr key={i} className="border-t">
-                    <td className="px-2 py-1 border">{i + 1}</td>
-                    <td className="px-2 py-1 border">{a.question}</td>
-                    <td className="px-2 py-1 border">{a.user}</td>
-                    <td className="px-2 py-1 border">
-                      {Array.isArray(a.correct) ? a.correct.join(', ') : a.correct}
-                    </td>
-                    <td className={`px-2 py-1 border font-bold ${a.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                      {a.isCorrect ? '정답' : '오답'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="text-center mt-4">
             <button
-              onClick={() => setQuizType(null)}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
+              className="mt-6 text-blue-200 underline hover:text-white self-center"
+              onClick={() => setAppPage("main")}
             >
-              Go Back
+              ◀ 처음으로 돌아가기
             </button>
           </div>
-        </div>
-      ) : (
-        <div className="w-full max-w-md bg-white text-blue-800 rounded-lg shadow p-6">
-          <h2 className="text-xl mb-2">
-            Question {currentQuestion + 1} / {quizzes[quizType].length}
-          </h2>
-          <p>{quizzes[quizType][currentQuestion].question}</p>
-
-          {/* 이미지 문제 및 모달 */}
-          {quizzes[quizType][currentQuestion].image && (
-            <>
-              <img
-                src={quizzes[quizType][currentQuestion].image}
-                alt="문제 이미지"
-                className="my-4 rounded-lg border max-w-full cursor-pointer"
-                onClick={() => setShowModal(true)}
-              />
-              <div className="flex space-x-2 justify-center mt-2">
-                <button
-                  onClick={() => setShowModal(true)}
-                  className="px-3 py-1 bg-green-500 text-white rounded"
-                >
-                  확대
-                </button>
-              </div>
-
-              {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-                  <button
-                    onClick={() => setShowModal(false)}
-                    className="absolute top-6 right-6 text-white bg-red-600 rounded-full px-4 py-2 shadow-lg hover:bg-red-700"
-                  >
-                    닫기
-                  </button>
-                  <img
-                    src={quizzes[quizType][currentQuestion].image}
-                    alt="확대된 문제 이미지"
-                    className="max-w-4xl max-h-full rounded-lg shadow-lg"
-                  />
-                </div>
-              )}
-            </>
-          )}
-
-          {/* 오디오 문제일 경우 */}
-          {quizzes[quizType][currentQuestion].audio && (
-            <>
-              <audio ref={audioRef} src={quizzes[quizType][currentQuestion].audio} />
-              <div className="flex space-x-3 justify-center mt-4">
-                <button
-                  onClick={playAudio}
-                  className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
-                >
-                  ▶ 재생
-                </button>
-                <button
-                  onClick={pauseAudio}
-                  className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600"
-                >
-                  ❙❙ 중지
-                </button>
-                <button
-                  onClick={resetAudio}
-                  className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
-                >
-                  ■ 초기화
-                </button>
-              </div>
-            </>
-          )}
-
-          {/* 객관식 문제일 경우 */}
-          {quizzes[quizType][currentQuestion].type === 'mcq' && quizzes[quizType][currentQuestion].options.length > 0 ? (
-            <div className="space-y-2 mt-4">
-              {quizzes[quizType][currentQuestion].options.map((option, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleAnswerOptionClick(option)}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded py-2"
-                >
-                  {option}
-                </button>
-              ))}
+        ) : showScore ? (
+          <div className="w-full max-w-4xl mx-auto bg-white text-blue-800 rounded-lg shadow p-6">
+            <div className="text-3xl font-extrabold text-center text-green-700 mb-2">
+              점수: {getPercentScore()} / 100
             </div>
-          ) : (
-            // 주관식 답안 입력
-            <div className="space-y-2 mt-4">
-              <input
-                type="text"
-                placeholder="답을 입력하세요"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleAnswerOptionClick(userInput);
-                }}
-                className="w-full border border-blue-600 rounded px-3 py-2 text-blue-700"
-              />
+            <p className="text-lg text-center text-gray-700 font-semibold mb-6">{getScoreMessage()}</p>
+            <p className="text-2xl mb-4 text-center font-bold">
+              You scored {score} out of {quizzes[quizType].length}
+            </p>
+            <div className="overflow-auto max-h-96">
+              <table className="w-full text-sm border border-gray-300">
+                <thead className="bg-gray-200 text-black">
+                  <tr>
+                    <th className="px-2 py-1 border">#</th>
+                    <th className="px-2 py-1 border">문제</th>
+                    <th className="px-2 py-1 border">내 답</th>
+                    <th className="px-2 py-1 border">정답</th>
+                    <th className="px-2 py-1 border">결과</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {answers.map((a, i) => (
+                    <tr key={i} className="border-t">
+                      <td className="px-2 py-1 border">{i + 1}</td>
+                      <td className="px-2 py-1 border">{a.question}</td>
+                      <td className="px-2 py-1 border">{a.user}</td>
+                      <td className="px-2 py-1 border">{Array.isArray(a.correct) ? a.correct.join(', ') : a.correct}</td>
+                      <td className={`px-2 py-1 border font-bold ${a.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                        {a.isCorrect ? '정답' : '오답'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex justify-center mt-4 space-x-4">
               <button
-                onClick={() => handleAnswerOptionClick(userInput)}
-                className="w-full bg-blue-700 hover:bg-blue-800 text-white rounded py-2"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-800"
+                onClick={() => setQuizType(null)}
               >
-                제출
+                다른 퀴즈
+              </button>
+              <button
+                className="px-6 py-3 bg-gray-400 text-white rounded-lg shadow hover:bg-gray-600"
+                onClick={() => setAppPage("main")}
+              >
+                처음으로
               </button>
             </div>
+          </div>
+        ) : (
+          <div className="w-full max-w-md mx-auto bg-white text-blue-800 rounded-lg shadow p-6">
+            <h2 className="text-xl mb-2">
+              Question {currentQuestion + 1} / {quizzes[quizType].length}
+            </h2>
+            <p>{quizzes[quizType][currentQuestion].question}</p>
+            {quizzes[quizType][currentQuestion].image && (
+              <>
+                <img
+                  src={quizzes[quizType][currentQuestion].image}
+                  alt="문제 이미지"
+                  className="my-4 rounded-lg border max-w-full cursor-pointer"
+                  onClick={() => setShowModal(true)}
+                />
+                <div className="flex space-x-2 justify-center mt-2">
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="px-3 py-1 bg-green-500 text-white rounded"
+                  >
+                    확대
+                  </button>
+                </div>
+                {showModal && (
+                  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+                    <button
+                      onClick={() => setShowModal(false)}
+                      className="absolute top-6 right-6 text-white bg-red-600 rounded-full px-4 py-2 shadow-lg hover:bg-red-700"
+                    >
+                      닫기
+                    </button>
+                    <img
+                      src={quizzes[quizType][currentQuestion].image}
+                      alt="확대된 문제 이미지"
+                      className="max-w-4xl max-h-full rounded-lg shadow-lg"
+                    />
+                  </div>
+                )}
+              </>
+            )}
+
+            {quizzes[quizType][currentQuestion].audio && (
+              <>
+                <audio ref={audioRef} src={quizzes[quizType][currentQuestion].audio} />
+                <div className="flex space-x-3 justify-center mt-4">
+                  <button
+                    onClick={playAudio}
+                    className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
+                  >
+                    ▶ 재생
+                  </button>
+                  <button
+                    onClick={pauseAudio}
+                    className="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600"
+                  >
+                    ❙❙ 중지
+                  </button>
+                  <button
+                    onClick={resetAudio}
+                    className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
+                  >
+                    ■ 초기화
+                  </button>
+                </div>
+              </>
+            )}
+            {quizzes[quizType][currentQuestion].type === 'mcq' && quizzes[quizType][currentQuestion].options.length > 0 ? (
+              <div className="space-y-2 mt-4">
+                {quizzes[quizType][currentQuestion].options.map((option, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleAnswerOptionClick(option)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded py-2"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2 mt-4">
+                <input
+                  type="text"
+                  placeholder="답을 입력하세요"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAnswerOptionClick(userInput);
+                  }}
+                  className="w-full border border-blue-600 rounded px-3 py-2 text-blue-700"
+                />
+                <button
+                  onClick={() => handleAnswerOptionClick(userInput)}
+                  className="w-full bg-blue-700 hover:bg-blue-800 text-white rounded py-2"
+                >
+                  제출
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      )}
+
+      {/* 학습 영역: 과목 선택 or 과목별 이론 */}
+      {appPage === "study" && (
+        <div className="w-full max-w-3xl mx-auto bg-white text-blue-900 rounded-lg shadow p-8">
+          {!studySubject ? (
+            <>
+              <h2 className="text-2xl font-bold mb-6 text-center">과목 선택</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {Object.keys(studySubjects).map((subject) => (
+                  <button
+                    key={subject}
+                    className="px-6 py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-800 font-semibold"
+                    onClick={() => setStudySubject(subject)}
+                  >
+                    {subject}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-8 text-center">
+                <button
+                  className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
+                  onClick={() => setAppPage("main")}
+                >
+                  ◀ 처음으로 돌아가기
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold mb-4 text-center">{studySubject} 이론 정리</h2>
+              <div className="space-y-6">
+                {studySubjects[studySubject].map((item, idx) => (
+                  <div key={idx} className="p-4 border rounded-lg bg-green-100 text-green-900 shadow">
+                    <div className="font-bold mb-2 text-lg">{item.title}</div>
+                    <div className="text-md" style={{ whiteSpace: 'pre-line' }}>
+                      {item.content}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 text-center space-x-4">
+                <button
+                  className="px-6 py-3 bg-gray-400 text-white rounded-lg shadow hover:bg-gray-600"
+                  onClick={() => setStudySubject(null)}
+                >
+                  ◀ 과목 선택으로
+                </button>
+                <button
+                  className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-700"
+                  onClick={() => setAppPage("main")}
+                >
+                  ◀ 메인으로 돌아가기
+                </button>
+              </div>
+            </>
           )}
         </div>
       )}
@@ -322,7 +481,7 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
